@@ -19,7 +19,6 @@ getRandomTitle = (req, res, next) => {
     }
 
     queryFoo(q1).then(res2 => {
-        console.log(res2);
         res.json({ title: res2.title });
     });
 
