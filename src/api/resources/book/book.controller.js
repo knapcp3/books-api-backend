@@ -9,6 +9,7 @@ getRandomTitle = (req, res, next) => {
             connection.query(queryString, function (error, results, fields) {
                 if (error) 
                     return reject(error);
+
                 return resolve(results[randomIndex(results.length)]);
             });
         });
@@ -29,16 +30,18 @@ getRandomTitle = (req, res, next) => {
 getBook = (req, res, next) => {
     const connection = db.getConnection();
     const id = req.params.id;
-    const queryString = `SELECT * from Book where id=${id}`;
+    const queryString = `SELECT * from Book where id=?`;
     
     const query = (queryString) => {
         return new Promise((resolve, reject) => {
-            connection.query(queryString, function (error, results, fields) {
+            connection.query(queryString, [id], function (error, results, fields) {
                 if (error) 
                     return reject(error);
+
                 if(!results || !results[0]) {
                     return reject(new Error('Not Found Error'));
                 }
+
                 return resolve(results[0]);
             });
         });
@@ -51,4 +54,31 @@ getBook = (req, res, next) => {
     });
 }
 
-module.exports = { getRandomTitle, getBook };
+postBook = (req, res, next) => {
+    const connection = db.getConnection();
+    const { author, title, publish_year } = req.body;
+    const queryString = `insert into Book (title, author, publish_year) values (?, ?, ?)`;
+    
+    const query = (queryString) => {
+        return new Promise((resolve, reject) => {
+            connection.query(queryString, [title, author, publish_year], function (error, results) {
+                if (error) 
+                    return reject(error);
+
+                if(!results) {
+                    return reject(new Error('Not Found Error'));
+                }
+
+                return resolve(results.insertId);
+            });
+        });
+    }
+
+    query(queryString).then(bookId => {
+        res.json(bookId);
+    }).catch(err => {
+        next(err);
+    });
+}
+
+module.exports = { getRandomTitle, getBook, postBook };

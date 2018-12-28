@@ -7,4 +7,6 @@ bookRouter.get('/random-title', bookController.getRandomTitle);
 
 bookRouter.get('/:id', bookController.getBook);
 
+bookRouter.post('/', bookController.postBook);
+
 module.exports = { bookRouter };
