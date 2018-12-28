@@ -1,8 +1,8 @@
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 
-const setGlobalMiddleware = (app) => {
-  app.use(bodyParser.urlencoded({ extended: true }))
-  app.use(bodyParser.json())
-}
+const setGlobalMiddleware = app => {
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+};
 
 module.exports = setGlobalMiddleware;
