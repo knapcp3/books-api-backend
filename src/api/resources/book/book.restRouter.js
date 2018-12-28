@@ -3,8 +3,8 @@ const bookController = require('./book.controller');
 
 const bookRouter = express.Router();
 
-bookRouter.get('/greet', bookController.greet);
-
 bookRouter.get('/random-title', bookController.getRandomTitle);
+
+bookRouter.get('/:id', bookController.getBook);
 
 module.exports = { bookRouter };

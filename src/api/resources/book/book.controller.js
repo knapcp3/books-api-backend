@@ -1,25 +1,23 @@
 const db = require('./../../../db');
 
-greet = (req, res, next) => {
-    res.json({ greeting: "hehXDD" });
-}
-
 getRandomTitle = (req, res, next) => {
     const connection = db.getConnection();
 
-    const q1 = 'SELECT * from Book';
-    const queryFoo = (queryString) => {
+    const q = 'SELECT * from Book';
+    const query = (queryString) => {
         return new Promise((resolve, reject) => {
             connection.query(queryString, function (error, results, fields) {
                 if (error) 
-                    reject(error);
-                resolve(results[randomIndex(results.length)]);
+                    return reject(error);
+                return resolve(results[randomIndex(results.length)]);
             });
         });
     }
 
-    queryFoo(q1).then(res2 => {
-        res.json({ title: res2.title });
+    query(q).then(book => {
+        res.json({ title: book.title });
+    }).catch(err => {
+        console.log(err);
     });
 
 
@@ -28,4 +26,29 @@ getRandomTitle = (req, res, next) => {
     }
 }
 
-module.exports = { getRandomTitle, greet };
+getBook = (req, res, next) => {
+    const connection = db.getConnection();
+    const id = req.params.id;
+    const queryString = `SELECT * from Book where id=${id}`;
+    
+    const query = (queryString) => {
+        return new Promise((resolve, reject) => {
+            connection.query(queryString, function (error, results, fields) {
+                if (error) 
+                    return reject(error);
+                if(!results || !results[0]) {
+                    return reject(new Error('Not Found Error'));
+                }
+                return resolve(results[0]);
+            });
+        });
+    }
+
+    query(queryString).then(book => {
+        res.json(book);
+    }).catch(err => {
+        next(err);
+    });
+}
+
+module.exports = { getRandomTitle, getBook };
